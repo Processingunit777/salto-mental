@@ -1,0 +1,18 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="#1A535C"/>
+  
+  <!-- Inner Circle -->
+  <circle cx="256" cy="256" r="200" fill="#FFC947"/>
+  
+  <!-- Brain Icon (Simplified) -->
+  <path d="M256 120C200 120 155 165 155 221C155 245 165 267 180 284C180 320 200 350 230 365C240 370 250 372 256 372C262 372 272 370 282 365C312 350 332 320 332 284C347 267 357 245 357 221C357 165 312 120 256 120Z" fill="#1A535C"/>
+  
+  <!-- Heart Shape (Mental Health Symbol) -->
+  <path d="M256 200C246 190 232 185 220 185C195 185 175 205 175 230C175 255 195 275 256 330C317 275 337 255 337 230C337 205 317 185 292 185C280 185 266 190 256 200Z" fill="white" opacity="0.9"/>
+  
+  <!-- Sparkle/Star (Progress Symbol) -->
+  <circle cx="340" cy="180" r="15" fill="white" opacity="0.8"/>
+  <circle cx="172" cy="180" r="12" fill="white" opacity="0.7"/>
+  <circle cx="256" cy="140" r="10" fill="white" opacity="0.6"/>
+</svg>
