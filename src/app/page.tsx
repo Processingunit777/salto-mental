@@ -33,10 +33,8 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // Verifica autenticação
     checkAuth();
 
-    // Escuta mudanças de autenticação
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -72,24 +70,18 @@ export default function Home() {
 
   async function loadUserData(uid: string) {
     try {
-      // Busca dados do usuário
       let data = await getUserData(uid);
       
-      // Se não existir, verifica se precisa fazer onboarding
       if (!data) {
-        // Verifica se tem perfil
         const profile = await getUserProfile(uid);
         if (!profile) {
-          // Novo usuário - mostrar onboarding
           setShowOnboarding(true);
           return;
         }
         
-        // Tem perfil mas não tem dados - criar dados padrão
         data = await createUserData(uid, 0);
       }
 
-      // Atualiza estado com dados do banco
       setUserData({
         savedMoney: parseFloat(data.saved_money?.toString() || '0'),
         daysClean: data.days_clean || 0,
@@ -106,19 +98,16 @@ export default function Home() {
     if (!userId) return;
 
     try {
-      // Cria perfil se não existir
       const profile = await getUserProfile(userId);
       if (!profile) {
         await createUserProfile(userId);
       }
 
-      // Cria dados do usuário
       await createUserData(userId, data.dailySavings || 0);
 
       setQuizResults(data);
       setShowOnboarding(false);
       
-      // Se o pagamento já foi processado no OnboardingQuiz, pula o PaymentScreen
       if (data.paymentCompleted) {
         setShowPayment(false);
       } else {
@@ -130,7 +119,6 @@ export default function Home() {
         dailySavings: data.dailySavings || 0,
       }));
 
-      // Recarrega dados do banco
       await loadUserData(userId);
     } catch (error) {
       console.error('Erro ao completar onboarding:', error);
@@ -149,7 +137,10 @@ export default function Home() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F7FFF7] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1A535C]"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-[#1A535C] mx-auto mb-4"></div>
+          <p className="text-[#4E6E75] font-medium">Carregando...</p>
+        </div>
       </div>
     );
   }
@@ -164,7 +155,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F7FFF7] relative pb-20">
-      {/* Telas principais */}
       <div className="max-w-md mx-auto">
         {currentScreen === "dashboard" && userId && <DashboardScreen userData={userData} setUserData={setUserData} userId={userId} />}
         {currentScreen === "chat" && <ChatScreen />}
@@ -173,13 +163,8 @@ export default function Home() {
         {currentScreen === "settings" && userId && <SettingsScreen userId={userId} />}
       </div>
 
-      {/* Navegação inferior */}
       <BottomNav currentScreen={currentScreen} setCurrentScreen={setCurrentScreen} />
-
-      {/* Botão SOS flutuante */}
       <SOSButton onClick={() => setShowSOS(true)} />
-
-      {/* Modal SOS */}
       {showSOS && <SOSModal onClose={() => setShowSOS(false)} />}
     </div>
   );

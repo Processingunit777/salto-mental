@@ -29,90 +29,115 @@ export async function getCurrentUser() {
 }
 
 export async function getUserProfile(userId: string) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('user_id', userId)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-  if (error) {
-    console.error('Erro ao buscar perfil:', error);
+    if (error) {
+      console.error('Erro ao buscar perfil:', error);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.error('Erro de rede ao buscar perfil:', error);
     return null;
   }
-  return data;
 }
 
 export async function createUserProfile(userId: string, fullName?: string) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .insert([
-      {
-        user_id: userId,
-        full_name: fullName || null,
-      },
-    ])
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .insert([
+        {
+          user_id: userId,
+          full_name: fullName || null,
+        },
+      ])
+      .select()
+      .single();
 
-  if (error) {
-    console.error('Erro ao criar perfil:', error);
+    if (error) {
+      console.error('Erro ao criar perfil:', error);
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error('Erro de rede ao criar perfil:', error);
     throw error;
   }
-  return data;
 }
 
 export async function updateUserProfile(userId: string, updates: { full_name?: string }) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .update({
-      ...updates,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('user_id', userId)
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .select()
+      .single();
 
-  if (error) {
-    console.error('Erro ao atualizar perfil:', error);
+    if (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error('Erro de rede ao atualizar perfil:', error);
     throw error;
   }
-  return data;
 }
 
 export async function getUserData(userId: string) {
-  const { data, error } = await supabase
-    .from('user_data')
-    .select('*')
-    .eq('user_id', userId)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('user_data')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
 
-  if (error && error.code !== 'PGRST116') {
-    console.error('Erro ao buscar dados do usuário:', error);
+    if (error && error.code !== 'PGRST116') {
+      console.error('Erro ao buscar dados do usuário:', error);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.error('Erro de rede ao buscar dados do usuário:', error);
     return null;
   }
-  return data;
 }
 
 export async function createUserData(userId: string, dailySavings: number = 0) {
-  const { data, error } = await supabase
-    .from('user_data')
-    .insert([
-      {
-        user_id: userId,
-        saved_money: 0,
-        days_clean: 0,
-        mood: 7,
-        daily_savings: dailySavings,
-      },
-    ])
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('user_data')
+      .insert([
+        {
+          user_id: userId,
+          saved_money: 0,
+          days_clean: 0,
+          mood: 7,
+          daily_savings: dailySavings,
+        },
+      ])
+      .select()
+      .single();
 
-  if (error) {
-    console.error('Erro ao criar dados do usuário:', error);
+    if (error) {
+      console.error('Erro ao criar dados do usuário:', error);
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error('Erro de rede ao criar dados do usuário:', error);
     throw error;
   }
-  return data;
 }
 
 export async function updateUserData(
@@ -125,35 +150,45 @@ export async function updateUserData(
     last_savings_click?: string | null;
   }
 ) {
-  const { data, error } = await supabase
-    .from('user_data')
-    .update({
-      ...updates,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('user_id', userId)
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('user_data')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('user_id', userId)
+      .select()
+      .maybeSingle();
 
-  if (error) {
-    console.error('Erro ao atualizar dados do usuário:', error);
-    throw error;
+    if (error) {
+      console.error('Erro ao atualizar dados do usuário:', error);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.error('Erro de rede ao atualizar dados do usuário:', error);
+    return null;
   }
-  return data;
 }
 
 export async function getUserGoals(userId: string) {
-  const { data, error } = await supabase
-    .from('goals')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
+  try {
+    const { data, error } = await supabase
+      .from('goals')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('Erro ao buscar objetivos:', error);
+    if (error) {
+      console.error('Erro ao buscar objetivos:', error);
+      return [];
+    }
+    return data || [];
+  } catch (error) {
+    console.error('Erro de rede ao buscar objetivos:', error);
     return [];
   }
-  return data || [];
 }
 
 export async function createGoal(
@@ -165,22 +200,27 @@ export async function createGoal(
     current_amount?: number;
   }
 ) {
-  const { data, error } = await supabase
-    .from('goals')
-    .insert([
-      {
-        user_id: userId,
-        ...goal,
-      },
-    ])
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('goals')
+      .insert([
+        {
+          user_id: userId,
+          ...goal,
+        },
+      ])
+      .select()
+      .single();
 
-  if (error) {
-    console.error('Erro ao criar objetivo:', error);
+    if (error) {
+      console.error('Erro ao criar objetivo:', error);
+      throw error;
+    }
+    return data;
+  } catch (error) {
+    console.error('Erro de rede ao criar objetivo:', error);
     throw error;
   }
-  return data;
 }
 
 export async function updateGoal(
@@ -192,19 +232,24 @@ export async function updateGoal(
     current_amount?: number;
   }
 ) {
-  const { data, error } = await supabase
-    .from('goals')
-    .update({
-      ...updates,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', goalId)
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('goals')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', goalId)
+      .select()
+      .maybeSingle();
 
-  if (error) {
-    console.error('Erro ao atualizar objetivo:', error);
-    throw error;
+    if (error) {
+      console.error('Erro ao atualizar objetivo:', error);
+      return null;
+    }
+    return data;
+  } catch (error) {
+    console.error('Erro de rede ao atualizar objetivo:', error);
+    return null;
   }
-  return data;
 }
